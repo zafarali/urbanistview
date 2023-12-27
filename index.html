@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<title>Rating App</title>
+</head>
+<body>
+  <h1>Ratings</h1>
+  <div id="rating-rows">
+    <div class="rating-row">
+      <h3>Transit connectivity</h3>
+      <button class="thumbs-up"></button>
+      <button class="thumbs-down"></button>
+    </div>
+    <div class="rating-row">
+      <h3>Bike infrastructure</h3>
+      <button class="thumbs-up"></button>
+      <button class="thumbs-down"></button>
+    </div>
+    <div class="rating-row">
+      <h3>Big cars/trucks</h3>
+      <button class="thumbs-up"></button>
+      <button class="thumbs-down"></button>
+    </div>
+    <div class="rating-row">
+      <h3>Big roads</h3>
+      <button class="thumbs-up"></button>
+      <button class="thumbs-down"></button>
+    </div>
+    <div class="rating-row">
+      <h3>Kids on bike</h3>
+      <button class="thumbs-up"></button>
+      <button class="thumbs-down"></button>
+    </div>
+  </div>
+  <button id="submit-button">Submit</button>
+  <script>
+// Get references to the rating rows and submit button
+const ratingRows = document.querySelectorAll('#rating-rows .rating-row');
+const submitButton = document.getElementById('submit-button');
+
+// Object to store ratings, using categories as keys
+const ratings = {};
+
+// Function to handle thumbs-up or thumbs-down clicks
+// Within the handleRatingClick function:
+function handleRatingClick(event) {
+  // ... existing code ...
+
+  // Identify the rating category
+  const ratingCategory = event.target.closest('.rating-row').querySelector('h3').textContent;
+
+  // Clear previous selection for the category
+  delete ratings[ratingCategory];
+
+  // Check if clicked button is thumbs-up/thumbs-down
+  if (event.target.classList.contains('thumbs-up')) {
+    ratings[ratingCategory] = true; // Store selection as "positive"
+  } else if (event.target.classList.contains('thumbs-down')) {
+    ratings[ratingCategory] = false; // Store selection as "negative"
+  }
+
+  // Remove "selected" class from all buttons in the row
+  const allButtons = event.target.closest('.rating-row').querySelectorAll('.thumbs-up, .thumbs-down');
+  for (const button of allButtons) {
+    button.classList.remove('selected');
+  }
+
+  // Add "selected" class to the clicked button
+  event.target.classList.add('selected');
+}
+
+
+
+// Add event listeners to all thumbs-up and thumbs-down buttons
+ratingRows.forEach(row => {
+  const thumbsUpButton = row.querySelector('.thumbs-up');
+  const thumbsDownButton = row.querySelector('.thumbs-down');
+  thumbsUpButton.addEventListener('click', handleRatingClick);
+  thumbsDownButton.addEventListener('click', handleRatingClick);
+});
+
+// Handle submit button click
+submitButton.addEventListener('click', () => {
+  getLocation();
+});
+
+// Function to get the user's location and combine with ratings
+function
+ 
+getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+
+        
+const longitude = position.coords.longitude;
+
+        // Combine ratings and coordinates into a single object
+        const allData = {
+          ratings,
+          coordinates: { latitude, longitude }
+        };
+
+        // Alert the user with all recorded data
+        alert(`All ratings and coordinates recorded:\n${JSON.stringify(allData, null, 2)}`);
+      },
+      (error) => {
+        alert('Error: Could not get your location.');
+      }
+    );
+  } else {
+    alert('Geolocation is not supported by your browser.');
+  }
+}  
+
+</script>
+</body>
+</html>
+
+
+
