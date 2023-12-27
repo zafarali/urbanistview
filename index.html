@@ -122,7 +122,7 @@ var handleSignedInUser = function(username){
     document.getElementById('sign-out').addEventListener('click', function() {
     firebase.auth().signOut();
   });
-  user_info['username'] = username
+  user_info['user'] = username.email;
 }
 
 
@@ -201,21 +201,19 @@ const longitude = position.coords.longitude;
 
 db.collection('ratings') // Assuming you want to store ratings in a collection named "ratings"
   .add({
-    username: user_info['name'],
+    user_info: user_info,
     ratings: allData.ratings,
     coordinates: allData.coordinates,
     timestamp: new Date().toISOString() // Add a timestamp for reference
   })
   .then(() => {
-    alert('Ratings saved to Firebase Cloud Firestore!');
+    alert(`All ratings and coordinates recorded to firebase:\n${JSON.stringify(allData, null, 2)}`);
   })
   .catch((error) => {
     console.error('Error saving data:', error);
     alert('Error saving data' + error.toString() +'. Please try again.');
   });
 
-        // Alert the user with all recorded data
-        alert(`All ratings and coordinates recorded:\n${JSON.stringify(allData, null, 2)}`);
       },
       (error) => {
         alert('Error: Could not get your location.');
