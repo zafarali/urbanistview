@@ -1,14 +1,16 @@
 /* Target the thumbs-up and thumbs-down buttons */
+.kidfriendly,
 .thumbs-up,
 .thumbs-down {
-  /* Remove default button styles */
-  border: none;
   background-color: transparent;
   padding: 0;
   /* Center the emoji within the button */
   text-align: center;
   /* Adjust font size as needed */
   font-size: 24px;
+  cursor: pointer; /* Indicate interactivity */
+  margin: 5px; /* Add spacing between buttons */
+  border: 2px solid transparent;
 }
 
 /* Add the emoji characters directly to the button content */
@@ -20,25 +22,14 @@
   content: "👎";
 }
 
-/* Optional: Some additional styling for visual appeal */
-.thumbs-up,
-.thumbs-down {
-  cursor: pointer; /* Indicate interactivity */
-  margin: 5px; /* Add spacing between buttons */
-border: 2px solid transparent;
-}
-
-.thumbs-up {
-  color: green; /* Optional: Color the thumbs-up emoji */
-}
-
-.thumbs-down {
-  color: red; /* Optional: Color the thumbs-down emoji */
-}
-
 /* Add a border to the selected button */
+.kidfriendly.selected,
 .thumbs-up.selected,
 .thumbs-down.selected {
-border: 2px solid; 
+  border: 2px solid; 
   border-color: blue; /* Or any color you prefer */
+}
+
+.kidfriendly.selected::after{
+  content:"☑️";
 }

@@ -19,28 +19,30 @@
   <div id="rating-rows">
     <div class="rating-row">
       <h3>Transit connectivity</h3>
-      <button class="thumbs-up"></button>
-      <button class="thumbs-down"></button>
+      <button class="thumbs-down">🚗</button>
+      <button class="thumbs-up">🚊</button>
     </div>
     <div class="rating-row">
       <h3>Bike infrastructure</h3>
-      <button class="thumbs-up"></button>
-      <button class="thumbs-down"></button>
+      <button class="thumbs-down">🚳</button>
+      <button class="thumbs-up">🚲</button>
+      <button class="kidfriendly">👶</button>
     </div>
     <div class="rating-row">
-      <h3>Big cars/trucks</h3>
-      <button class="thumbs-up"></button>
-      <button class="thumbs-down"></button>
+      <h3>Road Safety Vibes</h3>
+      <button class="thumbs-down">🚙</button>
+      <button class="thumbs-up">😌</button>
+      <button class="kidfriendly">👶</button>
     </div>
     <div class="rating-row">
-      <h3>Big roads</h3>
-      <button class="thumbs-up"></button>
-      <button class="thumbs-down"></button>
+      <h3>Density</h3>
+      <button class="thumbs-down">🏡</button>
+      <button class="thumbs-up">🏙️</button>
     </div>
     <div class="rating-row">
-      <h3>Kids on bike</h3>
-      <button class="thumbs-up"></button>
-      <button class="thumbs-down"></button>
+      <h3>Liveliness</h3>
+      <button class="thumbs-down">😴</button>
+      <button class="thumbs-up">👯</button>
     </div>
   </div>
   <button id="submit-button">Submit</button><br /><br/><br/>
@@ -166,6 +168,18 @@ function handleRatingClick(event) {
 }
 
 
+function toggleKidFriendly(event){
+  const ratingCategory = 'kid_friendly' + event.target.closest('.rating-row').querySelector('h3').textContent;
+  if (event.target.classList.contains('selected')){
+    event.target.classList.remove('selected');
+    delete ratings[ratingCategory];
+  }else{
+    ratings[ratingCategory] = true;
+    event.target.classList.add('selected');
+  }
+}
+
+
 
 // Add event listeners to all thumbs-up and thumbs-down buttons
 ratingRows.forEach(row => {
@@ -173,6 +187,9 @@ ratingRows.forEach(row => {
   const thumbsDownButton = row.querySelector('.thumbs-down');
   thumbsUpButton.addEventListener('click', handleRatingClick);
   thumbsDownButton.addEventListener('click', handleRatingClick);
+  if (row.querySelector('.kidfriendly')){
+    row.querySelector('.kidfriendly').addEventListener('click', toggleKidFriendly);
+  }
 });
 
 // Handle submit button click
@@ -181,9 +198,7 @@ submitButton.addEventListener('click', () => {
 });
 
 // Function to get the user's location and combine with ratings
-function
- 
-getLocation() {
+function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
