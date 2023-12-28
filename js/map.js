@@ -1,6 +1,7 @@
 
 // Function to add jitter to a coordinate
-function jitter(coordinate, jitterAmount) {
+function jitter(coordinate) {
+	const jitterAmount = 0.0001
   const randomOffset = Math.random() * jitterAmount * 2 - jitterAmount; // Random offset within the jitter range
   return coordinate + randomOffset;
 }
@@ -50,8 +51,8 @@ async function fetchAndParseData() {
         const data = doc.data();
     	parsed_data.push(
     		{
-    			latitude: jitter(data.coordinates.latitude, 0.0001),
-    			longitude: jitter(data.coordinates.longitude, 0.001),
+    			latitude: data.coordinates.latitude,
+    			longitude: data.coordinates.longitude,
     			'cyclists': data.ratings['Bike infrastructure'],
     			'transit': data.ratings['Transit connectivity'], 
     			'safety': data.ratings['Road Safety Vibes'],
@@ -69,11 +70,11 @@ async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon
 	const layerGroup = L.layerGroup();  
 	const posPoints = data.filter(point => point[columnName] === true);
 	posPoints.forEach(point => {
-	  const marker = L.marker([point.latitude, point.longitude], { icon: posIcon }).addTo(layerGroup);
+	  const marker = L.marker([jitter(point.latitude), jitter(point.longitude)], { icon: posIcon }).addTo(layerGroup);
 	});
 	const negPoints = data.filter(point => point[columnName] === false);
 	negPoints.forEach(point => {
-	  const marker = L.marker([point.latitude, point.longitude], { icon: negIcon }).addTo(layerGroup);
+	  const marker = L.marker([jitter(point.latitude), jitter(point.longitude)], { icon: negIcon }).addTo(layerGroup);
 	});
   
 	return layerGroup;
