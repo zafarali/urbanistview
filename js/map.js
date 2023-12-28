@@ -17,30 +17,54 @@ function initMap() {
   }
 
 
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDUsq12dvJHfWugismw78QpXT86CbTt-ks",
+    authDomain: "urbanistviewfromtheground.firebaseapp.com",
+    projectId: "urbanistviewfromtheground",
+    storageBucket: "urbanistviewfromtheground.appspot.com",
+    messagingSenderId: "447455183888",
+    appId: "1:447455183888:web:3257e5ff3435492ac8f695"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
 
 // Function to fetch and parse CSV data
 async function fetchAndParseData() {
-	const response = await fetch('data.csv');
-	const csvText = await response.text();
-	const parsedData = Papa.parse(csvText, {
-	  header: true
+
+	var parsed_data = [];
+	await db.collection("ratings").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        const data = doc.data();
+    	parsed_data.push(
+    		{
+    			latitude: data.coordinates.latitude,
+    			longitude: data.coordinates.longitude, 
+    			'cyclists': data.ratings['Bike infrastructure'],
+    			'transit': data.ratings['Transit connectivity'], 
+    			'safety': data.ratings['Road Safety Vibes'],
+    			'density': data.ratings['Density'],
+    			'liveliness': data.ratings['Liveliness']}
+    		)
+    	});
 	});
-	
-	console.log(parsedData.data);
-	return parsedData.data;
+	return parsed_data;
   }
 
 
-// Function to create a layer group for a given column
+
 async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon) {
-	
-	const layerGroup = L.layerGroup();
-  
-	const posPoints = data.filter(point => point[columnName] === "true");
+	const layerGroup = L.layerGroup();  
+	const posPoints = data.filter(point => point[columnName] === true);
 	posPoints.forEach(point => {
 	  const marker = L.marker([point.latitude, point.longitude], { icon: posIcon }).addTo(layerGroup);
 	});
-	const negPoints = data.filter(point => point[columnName] === "false");
+	const negPoints = data.filter(point => point[columnName] === false);
 	negPoints.forEach(point => {
 	  const marker = L.marker([point.latitude, point.longitude], { icon: negIcon }).addTo(layerGroup);
 	});
@@ -62,7 +86,6 @@ async function createDivIcon(emoji) {
 // Function to add data to the map
 async function addData(map) {
 	const data = await fetchAndParseData();
-  
 	// Add bike layer ----------------------------------------------------------
 	const posBikeIcon = await createDivIcon('🚲');
 	const negBikeIcon = await createDivIcon('🚳');
