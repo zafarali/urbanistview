@@ -9,9 +9,7 @@ html, body, #map {
 }
 
 /* Target the emoji element within the custom icon */
-.leaflet-marker-icon .bike {
-    width: 36px; /* Set the width */
-    height: 36px; /* Set the height */
+.leaflet-marker-icon .emoji {
     font-size: 500px;
 }
 

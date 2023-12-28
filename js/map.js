@@ -82,11 +82,12 @@ async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon
 
 
 // Function to create a div icon
-async function createDivIcon(emoji) {
+async function createDivIcon(emoji, color) {
 	return L.divIcon({
-	  className: 'emoji', // Class for styling
+	  // html: `<span style="background-color: ${color}">${emoji}</span>`,
 	  html: `${emoji}`,
-	  iconSize: [50, 50] // Optional size for consistency
+	  iconSize: [50, 50], // Optional size for consistency
+	  className: "emoji",
 	});
   }
   
@@ -95,31 +96,31 @@ async function createDivIcon(emoji) {
 async function addData(map) {
 	const data = await fetchAndParseData();
 	// Add bike layer ----------------------------------------------------------
-	const posBikeIcon = await createDivIcon('🚲');
-	const negBikeIcon = await createDivIcon('🚳');
+	const posBikeIcon = await createDivIcon('🚲', 'green');
+	const negBikeIcon = await createDivIcon('🚳', 'red');
 	const cyclistLayer = await createLayerGroupForColumn(map, data, 'cyclists', posBikeIcon, negBikeIcon);
 	cyclistLayer.addTo(map);
 
 	// Add transit layer ---------------------------------------------------------
-	const posTransitIcon = await createDivIcon(`🚊`);
-	const negTransitIcon = await createDivIcon(`🚗`);
+	const posTransitIcon = await createDivIcon(`🚊`, 'green');
+	const negTransitIcon = await createDivIcon(`🚗`, 'red');
 	const transitLayer = await createLayerGroupForColumn(map, data, 'transit', posTransitIcon, negTransitIcon);
 	transitLayer.addTo(map);
 
 	// Add safety layer ---------------------------------------------------------
-	const posSafetyIcon = await createDivIcon(`😌`);
-	const negSafetyIcon = await createDivIcon(`😨`);
+	const posSafetyIcon = await createDivIcon(`😌`, 'green');
+	const negSafetyIcon = await createDivIcon(`😨`, 'red');
 	const safetyLayer = await createLayerGroupForColumn(map, data, 'safety', posSafetyIcon, negSafetyIcon);
 	safetyLayer.addTo(map);
 
 	// Add density layer ---------------------------------------------------------
-	const posDensityIcon = await createDivIcon(`🏙️`);
-	const negDensityIcon = await createDivIcon(`🏡`);
+	const posDensityIcon = await createDivIcon(`🏙️`, 'green');
+	const negDensityIcon = await createDivIcon(`🏡`, 'red');
 	const densityLayer = await createLayerGroupForColumn(map, data, 'density', posDensityIcon, negDensityIcon);
 
 	// Add liveliness layer ---------------------------------------------------------
-	const posLivelinessIcon = await createDivIcon(`👯`);
-	const negLivelinessIcon = await createDivIcon(`😴`);
+	const posLivelinessIcon = await createDivIcon(`👯`, 'green');
+	const negLivelinessIcon = await createDivIcon(`😴`, 'red');
 	const livelinessLayer = await createLayerGroupForColumn(map, data, 'liveliness', posLivelinessIcon, negLivelinessIcon);
 
 	// Create our base layer and overlays --------------------------------------
