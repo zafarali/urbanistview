@@ -45,6 +45,10 @@
       <button class="thumbs-down">😴</button>
       <button class="thumbs-up">👯</button>
     </div>
+    <div class="freeform-text">
+      <label for="freeform-input">Additional tags:</label>
+      <input type="text" id="freeform-input" placeholder="Enter your tags here">
+    </div>
     </div>
   </div>
   <button id="submit-button" class="modern-button">Submit</button><br /><br/><br/>
@@ -216,12 +220,15 @@ const longitude = position.coords.longitude;
           coordinates: { latitude, longitude }
         };
 
+const freeformText = document.getElementById("freeform-input").value;
+
 
 db.collection('ratings') // Assuming you want to store ratings in a collection named "ratings"
   .add({
     user_info: user_info,
     ratings: allData.ratings,
     coordinates: allData.coordinates,
+    extra: freeformText,
     timestamp: new Date().toISOString() // Add a timestamp for reference
   })
   .then(() => {
