@@ -9,7 +9,7 @@ function initMap() {
 	});
   
 	// Add a tile layer (e.g., OpenStreetMap tiles)
-	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 	  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map);
 
@@ -22,24 +22,27 @@ function initMap() {
 async function fetchAndParseData() {
 	const response = await fetch('data.csv');
 	const csvText = await response.text();
-	const data = Papa.parse(csvText, {
-	  header: true,
-	  transformHeader: header => header.toLowerCase() // Convert headers to lowercase
-	}).data;
-	return data;
+	const parsedData = Papa.parse(csvText, {
+	  header: true
+	});
+	
+	console.log(parsedData.data);
+	return parsedData.data;
   }
 
 
-
 // Function to create a layer group for a given column
-async function createLayerGroupForColumn(map, data, columnName, divIcon) {
+async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon) {
 	
-	const filteredPoints = data.filter(point => point[columnName] === "true");
-  
 	const layerGroup = L.layerGroup();
   
-	filteredPoints.forEach(point => {
-	  const marker = L.marker([point.latitude, point.longitude], { icon: divIcon }).addTo(layerGroup);
+	const posPoints = data.filter(point => point[columnName] === "true");
+	posPoints.forEach(point => {
+	  const marker = L.marker([point.latitude, point.longitude], { icon: posIcon }).addTo(layerGroup);
+	});
+	const negPoints = data.filter(point => point[columnName] === "false");
+	negPoints.forEach(point => {
+	  const marker = L.marker([point.latitude, point.longitude], { icon: negIcon }).addTo(layerGroup);
 	});
   
 	return layerGroup;
@@ -61,14 +64,32 @@ async function addData(map) {
 	const data = await fetchAndParseData();
   
 	// Add bike layer ----------------------------------------------------------
-	const bikeIcon = await createDivIcon('🚲');
-	const cyclistLayer = await createLayerGroupForColumn(map, data, 'cyclists', bikeIcon);
+	const posBikeIcon = await createDivIcon('🚲');
+	const negBikeIcon = await createDivIcon('🚳');
+	const cyclistLayer = await createLayerGroupForColumn(map, data, 'cyclists', posBikeIcon, negBikeIcon);
 	cyclistLayer.addTo(map);
 
-	// Add truck layer ---------------------------------------------------------
-	const truckIcon = await createDivIcon(`🛻`);
-	const truckLayer = await createLayerGroupForColumn(map, data, 'trucks', truckIcon);
-	truckLayer.addTo(map);
+	// Add transit layer ---------------------------------------------------------
+	const posTransitIcon = await createDivIcon(`🚊`);
+	const negTransitIcon = await createDivIcon(`🚗`);
+	const transitLayer = await createLayerGroupForColumn(map, data, 'transit', posTransitIcon, negTransitIcon);
+	transitLayer.addTo(map);
+
+	// Add safety layer ---------------------------------------------------------
+	const posSafetyIcon = await createDivIcon(`😌`);
+	const negSafetyIcon = await createDivIcon(`😨`);
+	const safetyLayer = await createLayerGroupForColumn(map, data, 'safety', posSafetyIcon, negSafetyIcon);
+	safetyLayer.addTo(map);
+
+	// Add density layer ---------------------------------------------------------
+	const posDensityIcon = await createDivIcon(`🏙️`);
+	const negDensityIcon = await createDivIcon(`🏡`);
+	const densityLayer = await createLayerGroupForColumn(map, data, 'density', posDensityIcon, negDensityIcon);
+
+	// Add liveliness layer ---------------------------------------------------------
+	const posLivelinessIcon = await createDivIcon(`👯`);
+	const negLivelinessIcon = await createDivIcon(`😴`);
+	const livelinessLayer = await createLayerGroupForColumn(map, data, 'liveliness', posLivelinessIcon, negLivelinessIcon);
 
 	// Create our base layer and overlays --------------------------------------
 	// Following: https://leafletjs.com/examples/layers-control/
@@ -78,16 +99,33 @@ async function addData(map) {
 	});
 
 	const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'});
+    	maxZoom: 19,
+    	attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
+	});
+
+	const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '© CyclOSM is based on OpenStreetMap. Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
+	});
+
+	const cyclosmlite = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '© CyclOSM is based on OpenStreetMap. Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
+	});
 
 	const baseLayers = {
+		"CyclOSM": cyclosm,
 		"OpenStreetMap": osm,
 		"OpenStreetMap HOT": osmHOT
 	};
+	
 	const overlays = {
-  		"Cyclists": cyclistLayer,
-		"Trucks": truckLayer
+		"CyclOSM lite": cyclosmlite,
+  		"Bike infra": cyclistLayer,
+		"Transit connectivity": transitLayer,
+		"Perceived safety": safetyLayer,
+		"Density": densityLayer,
+		"Liveliness": livelinessLayer
 	};
 
 	// Create a layer control and add it to the map

@@ -10,11 +10,13 @@ def generate_data(num_points=100):
     for _ in range(num_points):
         lat = random.uniform(lat_bounds[0], lat_bounds[1])
         lng = random.uniform(lng_bounds[0], lng_bounds[1])
-        cyclists = random.choice(["true", "false"])  # 50% chance for each
-        trucks = random.random() > 0.8  # Assign True less often for trucks
+        cyclists = random.choice(["true", "false", None])  
+        transit = random.choice(["true", "false", None])
+        safety = random.choice(["true", "false", None])
         data.append({
             "cyclists": cyclists,
-            "trucks": trucks,
+            "transit": transit,
+            "safety": safety,
             "latitude": lat,
             "longitude": lng
         })
@@ -25,7 +27,7 @@ data = generate_data(50)
 
 # Save data to a CSV file
 with open("data.csv", "w", newline="") as csvfile:
-    fieldnames = ["cyclists", "trucks", "latitude", "longitude"]
+    fieldnames = ["cyclists", "transit", "safety", "latitude", "longitude"]
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(data)
