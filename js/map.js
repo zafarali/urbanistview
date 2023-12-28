@@ -1,4 +1,11 @@
 
+// Function to add jitter to a coordinate
+function jitter(coordinate, jitterAmount) {
+  const randomOffset = Math.random() * jitterAmount * 2 - jitterAmount; // Random offset within the jitter range
+  return coordinate + randomOffset;
+}
+
+
 // Function to initialize the map
 function initMap() {
 
@@ -10,7 +17,7 @@ function initMap() {
   
 	// Add a tile layer (e.g., OpenStreetMap tiles)
 	L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-	  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+	  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
 	}).addTo(map);
 
 	return map; // Return map
@@ -43,8 +50,8 @@ async function fetchAndParseData() {
         const data = doc.data();
     	parsed_data.push(
     		{
-    			latitude: data.coordinates.latitude,
-    			longitude: data.coordinates.longitude, 
+    			latitude: jitter(data.coordinates.latitude, 0.0001),
+    			longitude: jitter(data.coordinates.longitude, 0.001),
     			'cyclists': data.ratings['Bike infrastructure'],
     			'transit': data.ratings['Transit connectivity'], 
     			'safety': data.ratings['Road Safety Vibes'],

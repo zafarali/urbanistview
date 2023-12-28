@@ -14,13 +14,38 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <link rel="stylesheet" href="map.css">
+  <style>/* Target the buttons */
+.modern-button {
+  font-family: Roboto, sans-serif;
+  border: none;
+  border-radius: 5px; /* Adjust as desired */
+  padding: 15px 30px; /* Adjust for desired size */
+  background-color: #54a0ff; /* Light blue */
+/*  margin-top: 20px;*/
+  color: #fff; /* White text */
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out; /* Smooth color change */
+}
+
+.modern-button:hover {
+  background-color: #357ae8; /* Darker blue on hover */
+}
+
+.modern-button:active {
+  background-color: #2a62d0; /* Even darker blue on click */
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.15); /* Subtle shadow on click */
+}
+</style>
 </head>
 <body>
   <section id="explainer">
 	<h3> Here's our view from the ground: </h3>
+  <a class="modern-button", href="./index.html">record data</a><br /><br/><br/>
     </section>
-
   <div id="map" style="height: 400px;"></div>
 
-  <script src="./js/map.js"></script> </body>
+  <script src="./js/map.js"></script>
+
+</body>
 </html>
