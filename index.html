@@ -11,11 +11,12 @@
 <title>Rating App</title>
 </head>
 <body>
-  <h1>Ratings</h1>
+  <h1>urbanist views from the ground</h1>
 
 <div id="loader">Signing in...</div>
     <div id="firebaseui-auth-container"></div>
 
+  <div id="main-wrapper">
   <div id="rating-rows">
     <div class="rating-row">
       <h3>Transit connectivity</h3>
@@ -44,9 +45,10 @@
       <button class="thumbs-down">😴</button>
       <button class="thumbs-up">👯</button>
     </div>
+    </div>
   </div>
-  <button id="submit-button">Submit</button><br /><br/><br/>
-<button id='sign-out'>Sign Out</button>
+  <button id="submit-button" class="modern-button">Submit</button><br /><br/><br/>
+<button id="sign-out" class="modern-button">Sign Out</button>
   <script>
   // Import the functions you need from the SDKs you need
   // TODO: Add SDKs for Firebase products that you want to use

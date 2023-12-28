@@ -103,6 +103,7 @@ async function addData(map) {
     	attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
 	});
 
+	// https://www.cyclosm.org/#map=12/49.2576/-123.1241/cyclosm
 	const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
 		maxZoom: 19,
 		attribution: '© CyclOSM is based on OpenStreetMap. Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
@@ -118,7 +119,7 @@ async function addData(map) {
 		"OpenStreetMap": osm,
 		"OpenStreetMap HOT": osmHOT
 	};
-	
+
 	const overlays = {
 		"CyclOSM lite": cyclosmlite,
   		"Bike infra": cyclistLayer,
