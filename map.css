@@ -3,29 +3,56 @@ body {
     padding: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
+    min-height: 100dvh;
     font-family: Roboto, sans-serif;
 }
 
 html {
     height: 100%;
+    margin: 0;
 }
 
 #explainer {
     padding: 12px 16px;
+    flex-shrink: 0;
+}
+
+#explainer h3 {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 500;
 }
 
 #map {
     flex: 1;
-    width: 100vw;
+    width: 100%;
 }
 
 /* Target the emoji element within the custom icon */
-.leaflet-div-icon.emoji {
+.leaflet-div-icon.emoji-marker {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
     background: transparent;
     border: none;
+}
+
+.map-fab {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    z-index: 1000;
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    padding: 0;
+    line-height: 1;
 }

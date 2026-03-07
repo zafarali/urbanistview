@@ -71,8 +71,9 @@ async function createDivIcon(emoji, color) {
 	return L.divIcon({
 	  // html: `<span style="background-color: ${color}">${emoji}</span>`,
 	  html: `${emoji}`,
-	  iconSize: [50, 50], // Optional size for consistency
-	  className: "emoji",
+	  iconSize: [32, 32],
+	  iconAnchor: [16, 16],
+	  className: "leaflet-div-icon emoji-marker",
 	});
   }
   

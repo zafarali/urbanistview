@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Map</title>
- 
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -17,10 +16,11 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="map.css">
 </head>
+
 <body>
   <section id="explainer">
     <h3>Here's our view from the ground:</h3>
-    <a class="modern-button" href="./index.html">Record a new spot</a>
+    <a class="modern-button map-fab" href="./index.html" aria-label="Record a new spot" title="Record a new spot">+</a>
   </section>
   <div id="map"></div>
 
@@ -28,4 +28,5 @@
   <script src="./js/map.js"></script>
 
 </body>
+
 </html>

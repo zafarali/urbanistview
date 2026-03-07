@@ -47,16 +47,22 @@ firebase.auth().onAuthStateChanged(function (user) {
 var handleSignedOutUser = function () {
   document.getElementById('loader').style.display = 'none';
   document.getElementById('sign-out').style.display = 'none';
+  document.getElementById('main-wrapper').style.display = 'none';
+  document.getElementById('submit-button').style.display = 'none';
+  document.getElementById('firebaseui-auth-container').style.display = 'block';
   ui.start('#firebaseui-auth-container', getUiConfig());
 };
 
 var handleSignedInUser = function (username) {
   document.getElementById('loader').style.display = 'block';
   document.getElementById('sign-out').style.display = 'block';
-  document.getElementById('loader').textContent = 'welcome ' + username.email;
-  document.getElementById('sign-out').addEventListener('click', function () {
+  document.getElementById('main-wrapper').style.display = 'block';
+  document.getElementById('submit-button').style.display = 'block';
+  document.getElementById('firebaseui-auth-container').style.display = 'none';
+  document.getElementById('loader').textContent = 'Welcome, ' + username.email;
+  document.getElementById('sign-out').onclick = function () {
     firebase.auth().signOut();
-  });
+  };
   user_info['user'] = username.email;
 };
 

@@ -2,12 +2,12 @@
 // Uses the compat SDK already loaded on the page.
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDCR-hLewTaxn1U-3RWR4yx5p6-N1hrdHE",
-  authDomain: "urbanistviewfromtheground.firebaseapp.com",
-  projectId: "urbanistviewfromtheground",
-  storageBucket: "urbanistviewfromtheground.appspot.com",
-  messagingSenderId: "447455183888",
-  appId: "1:447455183888:web:3257e5ff3435492ac8f695"
+  apiKey: "__FIREBASE_API_KEY__",
+  authDomain: "__FIREBASE_AUTH_DOMAIN__",
+  projectId: "__FIREBASE_PROJECT_ID__",
+  storageBucket: "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId: "__FIREBASE_APP_ID__"
 };
 
 if (!firebase.apps || firebase.apps.length === 0) {
