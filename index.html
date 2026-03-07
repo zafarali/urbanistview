@@ -1,253 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="stylesheet" href="style.css">
 <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
 <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
 <title>Rating App</title>
 </head>
 <body>
   <h1>urbanist views from the ground</h1>
 
-<div id="loader">Signing in...</div>
-    <div id="firebaseui-auth-container"></div>
+  <div id="loader">Signing in...</div>
+  <div id="firebaseui-auth-container"></div>
 
   <div id="main-wrapper">
-  <div id="rating-rows">
-    <div class="rating-row">
-      <h3>Transit connectivity</h3>
-      <button class="thumbs-down">🚗</button>
-      <button class="thumbs-up">🚊</button>
-    </div>
-    <div class="rating-row">
-      <h3>Bike infrastructure</h3>
-      <button class="thumbs-down">🚳</button>
-      <button class="thumbs-up">🚲</button>
-      <button class="kidfriendly">👶</button>
-    </div>
-    <div class="rating-row">
-      <h3>Road Safety Vibes</h3>
-      <button class="thumbs-down">🚙</button>
-      <button class="thumbs-up">😌</button>
-      <button class="kidfriendly">👶</button>
-    </div>
-    <div class="rating-row">
-      <h3>Density</h3>
-      <button class="thumbs-down">🏡</button>
-      <button class="thumbs-up">🏙️</button>
-    </div>
-    <div class="rating-row">
-      <h3>Liveliness</h3>
-      <button class="thumbs-down">😴</button>
-      <button class="thumbs-up">👯</button>
-    </div>
-    <div class="freeform-text">
-      <label for="freeform-input">Additional tags:</label>
-      <input type="text" id="freeform-input" placeholder="Enter your tags here">
-    </div>
+    <div id="rating-rows">
+      <div class="rating-row">
+        <h3>Transit connectivity</h3>
+        <button class="thumbs-down">🚗</button>
+        <button class="thumbs-up">🚊</button>
+      </div>
+      <div class="rating-row">
+        <h3>Bike infrastructure</h3>
+        <button class="thumbs-down">🚳</button>
+        <button class="thumbs-up">🚲</button>
+        <button class="kidfriendly">👶</button>
+      </div>
+      <div class="rating-row">
+        <h3>Road Safety Vibes</h3>
+        <button class="thumbs-down">🚙</button>
+        <button class="thumbs-up">😌</button>
+        <button class="kidfriendly">👶</button>
+      </div>
+      <div class="rating-row">
+        <h3>Density</h3>
+        <button class="thumbs-down">🏡</button>
+        <button class="thumbs-up">🏙️</button>
+      </div>
+      <div class="rating-row">
+        <h3>Liveliness</h3>
+        <button class="thumbs-down">😴</button>
+        <button class="thumbs-up">👯</button>
+      </div>
+      <div class="freeform-text">
+        <label for="freeform-input">Additional tags:</label>
+        <input type="text" id="freeform-input" placeholder="Enter your tags here">
+      </div>
     </div>
   </div>
-  <button id="submit-button" class="modern-button">Submit</button><br /><br/><br/>
-  <a class="modern-button", href="./map.html">See map</a><br /><br/><br/>
-<button id="sign-out" class="modern-button">Sign Out</button>
-  <script>
-  // Import the functions you need from the SDKs you need
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDUsq12dvJHfWugismw78QpXT86CbTt-ks",
-    authDomain: "urbanistviewfromtheground.firebaseapp.com",
-    projectId: "urbanistviewfromtheground",
-    storageBucket: "urbanistviewfromtheground.appspot.com",
-    messagingSenderId: "447455183888",
-    appId: "1:447455183888:web:3257e5ff3435492ac8f695"
-  };
+  <div id="actions">
+    <button id="submit-button" class="modern-button">Submit this place</button>
+    <a class="modern-button" href="./map.html">See the shared map</a>
+    <button id="sign-out" class="modern-button">Sign Out</button>
+  </div>
+  <div id="toast" class="toast" aria-live="polite"></div>
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-
-  var user_info = {}
-
-
-  function getUiConfig() {
-      // FirebaseUI config.
-      return {
-         callbacks: {
-          signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-            var user = authResult.user;
-            if (authResult.user) {
-              handleSignedInUser(authResult.user);
-            }
-           alert('signed in!');  
-           return false;
-          },
-          signInFailure: function(error) {
-            // Some unrecoverable error occurred during sign-in.
-            // Return a promise when error handling is completed and FirebaseUI
-            // will reset, clearing any UI. This commonly occurs for error code
-            // 'firebaseui/anonymous-upgrade-merge-conflict' when merge conflict
-            // occurs. Check below for more details on this.
-alert('Failed to sign in: ' + error.toString());	
-return false;          
-},
-          uiShown: function() {
-            // The widget is rendered.
-            // Hide the loader.
-            document.getElementById('loader').style.display = 'none';
-          }
-        }, 
-      signInSuccessUrl: '/index.html', 
-        // Leave the lines as is for the providers you want to offer your users.
-        signInOptions: [
-          firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        ],
-     }
-   };
-
-      // Initialize the FirebaseUI Widget using Firebase.
-    var ui = new firebaseui.auth.AuthUI(firebase.auth());
-
-
-    firebase.auth().onAuthStateChanged(function(user) {
-      user ? handleSignedInUser(user) : handleSignedOutUser();
-    });
-
-var handleSignedOutUser = function() {
-  document.getElementById('loader').style.display = 'none';
-  document.getElementById('sign-out').style.display = 'none';
-  ui.start('#firebaseui-auth-container', getUiConfig());
-};
-
-var handleSignedInUser = function(username){
-  document.getElementById('loader').style.display = 'block';
-  document.getElementById('sign-out').style.display = 'block';
-    document.getElementById('loader').textContent = 'welcome ' + username.email;
-    document.getElementById('sign-out').addEventListener('click', function() {
-    firebase.auth().signOut();
-  });
-  user_info['user'] = username.email;
-}
-
-
-  const db = firebase.firestore();
-
-
-
-// Get references to the rating rows and submit button
-const ratingRows = document.querySelectorAll('#rating-rows .rating-row');
-const submitButton = document.getElementById('submit-button');
-
-// Object to store ratings, using categories as keys
-const ratings = {};
-
-// Function to handle thumbs-up or thumbs-down clicks
-// Within the handleRatingClick function:
-function handleRatingClick(event) {
-  // ... existing code ...
-
-  // Identify the rating category
-  const ratingCategory = event.target.closest('.rating-row').querySelector('h3').textContent;
-
-  // Clear previous selection for the category
-  delete ratings[ratingCategory];
-
-  // Check if clicked button is thumbs-up/thumbs-down
-  if (event.target.classList.contains('thumbs-up')) {
-    ratings[ratingCategory] = true; // Store selection as "positive"
-  } else if (event.target.classList.contains('thumbs-down')) {
-    ratings[ratingCategory] = false; // Store selection as "negative"
-  }
-
-  // Remove "selected" class from all buttons in the row
-  const allButtons = event.target.closest('.rating-row').querySelectorAll('.thumbs-up, .thumbs-down');
-  for (const button of allButtons) {
-    button.classList.remove('selected');
-  }
-
-  // Add "selected" class to the clicked button
-  event.target.classList.add('selected');
-}
-
-
-function toggleKidFriendly(event){
-  const ratingCategory = 'kid_friendly' + event.target.closest('.rating-row').querySelector('h3').textContent;
-  if (event.target.classList.contains('selected')){
-    event.target.classList.remove('selected');
-    delete ratings[ratingCategory];
-  }else{
-    ratings[ratingCategory] = true;
-    event.target.classList.add('selected');
-  }
-}
-
-
-
-// Add event listeners to all thumbs-up and thumbs-down buttons
-ratingRows.forEach(row => {
-  const thumbsUpButton = row.querySelector('.thumbs-up');
-  const thumbsDownButton = row.querySelector('.thumbs-down');
-  thumbsUpButton.addEventListener('click', handleRatingClick);
-  thumbsDownButton.addEventListener('click', handleRatingClick);
-  if (row.querySelector('.kidfriendly')){
-    row.querySelector('.kidfriendly').addEventListener('click', toggleKidFriendly);
-  }
-});
-
-// Handle submit button click
-submitButton.addEventListener('click', () => {
-  getLocation();
-});
-
-// Function to get the user's location and combine with ratings
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const latitude = position.coords.latitude;
-
-        
-const longitude = position.coords.longitude;
-
-        // Combine ratings and coordinates into a single object
-        const allData = {
-          ratings,
-          coordinates: { latitude, longitude },
-          freeformText: document.getElementById("freeform-input").value,
-        };
-
-db.collection('ratings') // Assuming you want to store ratings in a collection named "ratings"
-  .add({
-    user_info: user_info,
-    ratings: allData.ratings,
-    coordinates: allData.coordinates,
-    extra: allData.freeformText,
-    timestamp: new Date().toISOString() // Add a timestamp for reference
-  })
-  .then(() => {
-    alert(`All ratings and coordinates recorded to firebase:\n${JSON.stringify(allData, null, 2)}`);
-  })
-  .catch((error) => {
-    console.error('Error saving data:', error);
-    alert('Error saving data' + error.toString() +'. Please try again.');
-  });
-
-      },
-      (error) => {
-        alert('Error: Could not get your location.');
-      }
-    );
-  } else {
-    alert('Geolocation is not supported by your browser.');
-  }
-}  
-
-</script>
+  <script src="./js/firebase-config.js"></script>
+  <script src="./js/index.js"></script>
 </body>
 </html>
 

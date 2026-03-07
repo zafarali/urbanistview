@@ -1,5 +1,14 @@
 body {
   font-family: Roboto, sans-serif; /* Use Arial, or a generic sans-serif if Arial is unavailable */
+  margin: 0;
+  padding: 16px;
+  background-color: #f5f7fb;
+}
+
+h1 {
+  font-size: 24px;
+  text-align: center;
+  margin: 12px 0 20px;
 }
 
 /* Target the ratings container */
@@ -7,11 +16,45 @@ body {
   background-color: #def0ff; /* Light blue background */
   border-radius: 10px; /* Rounded corners */
   padding: 20px; /* Add some padding for content spacing */
-  margin-bottom: 10px; /* Add some spacing between the container and the footer */
-  margin-bottom: 10px; /* Add some spacing between the container and the footer */
+  margin: 0 auto 12px; /* Center and space from footer */
+  max-width: 480px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 
+.rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
 
+.rating-row h3 {
+  font-size: 16px;
+  margin: 0;
+  flex: 1;
+}
+
+.freeform-text {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.freeform-text input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+#actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
 
 /* Target the buttons */
 .modern-button {
@@ -24,6 +67,9 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease-in-out; /* Smooth color change */
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
 }
 
 .modern-button:hover {
@@ -35,14 +81,12 @@ body {
   box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.15); /* Subtle shadow on click */
 }
 
-
-
 /* Target the thumbs-up and thumbs-down buttons */
 .kidfriendly,
 .thumbs-up,
 .thumbs-down {
   background-color: transparent;
-  padding: 0;
+  padding: 8px;
   /* Center the emoji within the button */
   text-align: center;
   /* Adjust font size as needed */
@@ -50,25 +94,48 @@ body {
   cursor: pointer; /* Indicate interactivity */
   margin: 5px; /* Add spacing between buttons */
   border: 2px solid transparent;
-}
-
-/* Add the emoji characters directly to the button content */
-.thumbs-up::before {
-  content: "👍";
-}
-
-.thumbs-down::before {
-  content: "👎";
+  border-radius: 999px;
 }
 
 /* Add a border to the selected button */
 .kidfriendly.selected,
 .thumbs-up.selected,
 .thumbs-down.selected {
-  border: 2px solid; 
+  border: 2px solid;
   border-color: blue; /* Or any color you prefer */
 }
 
 .kidfriendly.selected::after{
   content:"☑️";
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background-color: #0f172a;
+  color: #f9fafb;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  max-width: 90%;
+  text-align: center;
+}
+
+.toast--visible {
+  opacity: 0.95;
+  transform: translateX(-50%) translateY(-4px);
+  pointer-events: auto;
+}
+
+.toast--error {
+  background-color: #b91c1c;
+}
+
+.toast--success {
+  background-color: #15803d;
 }

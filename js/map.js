@@ -25,21 +25,6 @@ function initMap() {
   }
 
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDUsq12dvJHfWugismw78QpXT86CbTt-ks",
-    authDomain: "urbanistviewfromtheground.firebaseapp.com",
-    projectId: "urbanistviewfromtheground",
-    storageBucket: "urbanistviewfromtheground.appspot.com",
-    messagingSenderId: "447455183888",
-    appId: "1:447455183888:web:3257e5ff3435492ac8f695"
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-
 // Function to fetch and parse CSV data
 async function fetchAndParseData() {
 
