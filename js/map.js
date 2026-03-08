@@ -2,13 +2,59 @@
 // Removed jitter function in favor of clustering
 
 
-// Function to initialize the map
-function initMap() {
+const CITY_CENTERS = [
+	{ name: 'Toronto', lat: 43.6532, lng: -79.3832, zoom: 12 },
+	{ name: 'Vancouver', lat: 49.2827, lng: -123.1207, zoom: 12 },
+	{ name: 'Montreal', lat: 45.5017, lng: -73.5673, zoom: 12 },
+	{ name: 'San Francisco', lat: 37.7749, lng: -122.4194, zoom: 12 }
+];
 
-	// Center the map on Vancouver, Canada
+function haversineDistance(lat1, lon1, lat2, lon2) {
+	const R = 6371; // Radius of the earth in km
+	const dLat = (lat2 - lat1) * Math.PI / 180;
+	const dLon = (lon2 - lon1) * Math.PI / 180;
+	const a =
+		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+		Math.sin(dLon / 2) * Math.sin(dLon / 2);
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	return R * c; // Distance in km
+}
+
+function findNearestCity(lat, lng) {
+	let nearest = CITY_CENTERS[0];
+	let minDistance = Infinity;
+
+	CITY_CENTERS.forEach(city => {
+		const distance = haversineDistance(lat, lng, city.lat, city.lng);
+		if (distance < minDistance) {
+			minDistance = distance;
+			nearest = city;
+		}
+	});
+
+	return nearest;
+}
+
+function getUserLocation() {
+	return new Promise((resolve, reject) => {
+		if (!navigator.geolocation) {
+			reject(new Error("Geolocation is not supported by your browser"));
+		} else {
+			navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+		}
+	});
+}
+
+// Function to initialize the map
+function initMap(options = {}) {
+	const center = options.center || [49.2827, -123.1207];
+	const zoom = options.zoom || 12;
+
+	// Center the map
 	const map = L.map('map', {
-		center: [49.2827, -123.1207], // Coordinates for Vancouver
-		zoom: 12 // Adjust zoom level as needed
+		center: center,
+		zoom: zoom
 	});
 
 	// Add a tile layer (e.g., OpenStreetMap tiles)
@@ -185,6 +231,17 @@ async function addData(map) {
 // Call the initMap function to create the map and save into a variable
 const map = initMap();
 
-// Call the addData function
-addData(map);
+async function startup() {
+	try {
+		const position = await getUserLocation();
+		const nearest = findNearestCity(position.coords.latitude, position.coords.longitude);
+		map.setView([nearest.lat, nearest.lng], nearest.zoom);
+	} catch (error) {
+		console.log("Geolocation error or denied. Defaulting to Vancouver.", error);
+	}
+	// Call the addData function regardless of geolocation result
+	addData(map);
+}
+
+startup();
 
