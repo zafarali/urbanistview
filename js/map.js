@@ -65,65 +65,90 @@ function initMap(options = {}) {
 	return map; // Return map
 }
 
+// Track processed document IDs to avoid duplicates
+const processedDocIds = new Set();
 
-// Function to fetch and parse CSV data
-async function fetchAndParseData() {
+// Layer groups mapping
+let categoricalLayers = {};
 
-	var parsed_data = [];
-	await db.collection("ratings").get().then((querySnapshot) => {
-		querySnapshot.forEach((doc) => {
-			// doc.data() is never undefined for query doc snapshots
-			// console.log(doc.id, " => ", doc.data());
+// Function to fetch data for a specific viewport radius
+async function fetchGeohashData(center, radiusInM) {
+	const geofire = window["geofire-common"];
+	const bounds = geofire.geohashQueryBounds(center, radiusInM);
+	const promises = bounds.map(b => {
+		return db.collection('ratings')
+			.orderBy('geohash')
+			.startAt(b[0])
+			.endAt(b[1])
+			.get();
+	});
+
+	const snapshots = await Promise.all(promises);
+	const newPoints = [];
+
+	snapshots.forEach(snapshot => {
+		snapshot.docs.forEach(doc => {
+			if (processedDocIds.has(doc.id)) return;
+			processedDocIds.add(doc.id);
+
 			const data = doc.data();
-			parsed_data.push(
-				{
-					latitude: data.coordinates.latitude,
-					longitude: data.coordinates.longitude,
-					'cyclists': data.ratings['Bike infrastructure'],
-					'transit': data.ratings['Transit connectivity'],
-					'safety': data.ratings['Road Safety Vibes'],
-					'density': data.ratings['Density'],
-					'liveliness': data.ratings['Liveliness'],
-					'transitStopQuality': data.ratings['Transit Stop Quality'],
-					'trafficCalming': data.ratings['Traffic Calming'],
-					'sidewalkQuality': data.ratings['Sidewalk Quality'],
-					'loved': data.ratings['loved'],
-					'clean': data.ratings['clean'],
-					'activismAndOrganizing': data.ratings['activism_and_organizing'],
-					'supportiveSigns': data.ratings['supportive_signs'],
-					'greenery': data.ratings['greenery'],
-				}
-			)
+			// Ensure we have a location (GeoPoint)
+			if (!data.location) return;
+
+			const lat = data.location.latitude;
+			const lng = data.location.longitude;
+
+			// Optional: exact distance check if we want a perfect circle, 
+			// but for a map viewport, the rectangular geohash bounds are usually fine.
+
+			newPoints.push({
+				id: doc.id,
+				latitude: lat,
+				longitude: lng,
+				ratings: data.ratings || {}
+			});
 		});
 	});
-	return parsed_data;
+
+	return newPoints;
+}
+
+// Function to parse the raw firestore data into our app structure
+function transformPoint(point) {
+	return {
+		latitude: point.latitude,
+		longitude: point.longitude,
+		'cyclists': point.ratings['Bike infrastructure'],
+		'transit': point.ratings['Transit connectivity'],
+		'safety': point.ratings['Road Safety Vibes'],
+		'density': point.ratings['Density'],
+		'liveliness': point.ratings['Liveliness'],
+		'transitStopQuality': point.ratings['Transit Stop Quality'],
+		'trafficCalming': point.ratings['Traffic Calming'],
+		'sidewalkQuality': point.ratings['Sidewalk Quality'],
+		'loved': point.ratings['loved'],
+		'clean': point.ratings['clean'],
+		'activismAndOrganizing': point.ratings['activism_and_organizing'],
+		'supportiveSigns': point.ratings['supportive_signs'],
+		'greenery': point.ratings['greenery'],
+	};
 }
 
 
 
-async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon) {
-	const markers = L.markerClusterGroup({
+async function createEmptyLayerGroup() {
+	return L.markerClusterGroup({
 		iconCreateFunction: function (cluster) {
 			const children = cluster.getAllChildMarkers();
 			let scoreSum = 0;
 			children.forEach(marker => {
 				scoreSum += (marker.urbanistScore || 0);
 			});
-			// Average score maps between -1 to 1
 			const avgScore = scoreSum / children.length;
-
-			// Normalize to 0 to 1
 			const normalizedScore = (avgScore + 1) / 2;
-
-			// Calculate Hue: 0 is Red, 120 is Green
 			const hue = normalizedScore * 120;
-			// Vibrant high-opacity background
 			const bgColor = `hsla(${hue}, 80%, 45%, 0.9)`;
-
 			const count = cluster.getChildCount();
-
-			// Dynamic size based on count: log scale for better distribution
-			// Base size 36px for small clusters, up to 64px for very large ones
 			const size = Math.min(64, 36 + Math.log10(count) * 12);
 
 			return L.divIcon({
@@ -137,20 +162,19 @@ async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon
 		showCoverageOnHover: false,
 		zoomToBoundsOnClick: true
 	});
-	const posPoints = data.filter(point => point[columnName] === true);
-	posPoints.forEach(point => {
+}
+
+function addPointToLayer(layer, point, columnName, posIcon, negIcon) {
+	const val = point[columnName];
+	if (val === true) {
 		const marker = L.marker([point.latitude, point.longitude], { icon: posIcon });
 		marker.urbanistScore = 1;
-		markers.addLayer(marker);
-	});
-	const negPoints = data.filter(point => point[columnName] === false);
-	negPoints.forEach(point => {
+		layer.addLayer(marker);
+	} else if (val === false) {
 		const marker = L.marker([point.latitude, point.longitude], { icon: negIcon });
 		marker.urbanistScore = -1;
-		markers.addLayer(marker);
-	});
-
-	return markers;
+		layer.addLayer(marker);
+	}
 }
 
 
@@ -166,105 +190,111 @@ async function createDivIcon(emoji, color) {
 }
 
 
-// Function to add data to the map
-async function addData(map) {
-	const data = await fetchAndParseData();
-	// Add bike layer ----------------------------------------------------------
-	const posBikeIcon = await createDivIcon('🚲', 'green');
-	const negBikeIcon = await createDivIcon('🚳', 'red');
-	const cyclistLayer = await createLayerGroupForColumn(map, data, 'cyclists', posBikeIcon, negBikeIcon);
-	cyclistLayer.addTo(map);
+// Function to initialize empty layers and UI controls
+async function setupLayers(map) {
+	// Icons
+	const icons = {
+		cyclists: { pos: await createDivIcon('🚲', 'green'), neg: await createDivIcon('🚳', 'red') },
+		transit: { pos: await createDivIcon('🚊', 'green'), neg: await createDivIcon('🚗', 'red') },
+		safety: { pos: await createDivIcon('😌', 'green'), neg: await createDivIcon('😨', 'red') },
+		density: { pos: await createDivIcon('🏙️', 'green'), neg: await createDivIcon('🏡', 'red') },
+		liveliness: { pos: await createDivIcon('👯', 'green'), neg: await createDivIcon('😴', 'red') },
+		transitStopQuality: { pos: await createDivIcon('🚏', 'green'), neg: await createDivIcon('🚏', 'green') },
+		trafficCalming: { pos: await createDivIcon('🍌', 'green'), neg: await createDivIcon('🍌', 'green') },
+		sidewalkQuality: { pos: await createDivIcon('🚶', 'green'), neg: await createDivIcon('🚶', 'green') },
+		loved: { pos: await createDivIcon('💕', 'green'), neg: await createDivIcon('💕', 'green') },
+		clean: { pos: await createDivIcon('🗑️', 'green'), neg: await createDivIcon('🗑️', 'green') },
+		activism: { pos: await createDivIcon('📣', 'green'), neg: await createDivIcon('📣', 'green') },
+		signs: { pos: await createDivIcon('🪧', 'green'), neg: await createDivIcon('🪧', 'green') },
+		greenery: { pos: await createDivIcon('🌱', 'green'), neg: await createDivIcon('🌱', 'green') }
+	};
 
-	// Add transit layer ---------------------------------------------------------
-	const posTransitIcon = await createDivIcon(`🚊`, 'green');
-	const negTransitIcon = await createDivIcon(`🚗`, 'red');
-	const transitLayer = await createLayerGroupForColumn(map, data, 'transit', posTransitIcon, negTransitIcon);
-	transitLayer.addTo(map);
+	// Create and store layer groups
+	categoricalLayers = {
+		cyclists: await createEmptyLayerGroup(),
+		transit: await createEmptyLayerGroup(),
+		transitStopQuality: await createEmptyLayerGroup(),
+		safety: await createEmptyLayerGroup(),
+		trafficCalming: await createEmptyLayerGroup(),
+		sidewalkQuality: await createEmptyLayerGroup(),
+		loved: await createEmptyLayerGroup(),
+		clean: await createEmptyLayerGroup(),
+		activism: await createEmptyLayerGroup(),
+		signs: await createEmptyLayerGroup(),
+		greenery: await createEmptyLayerGroup(),
+		density: await createEmptyLayerGroup(),
+		liveliness: await createEmptyLayerGroup()
+	};
 
-	// Add safety layer ---------------------------------------------------------
-	const posSafetyIcon = await createDivIcon(`😌`, 'green');
-	const negSafetyIcon = await createDivIcon(`😨`, 'red');
-	const safetyLayer = await createLayerGroupForColumn(map, data, 'safety', posSafetyIcon, negSafetyIcon);
-	safetyLayer.addTo(map);
+	// Add default visible layers
+	categoricalLayers.cyclists.addTo(map);
+	categoricalLayers.transit.addTo(map);
+	categoricalLayers.safety.addTo(map);
 
-	// Add density layer ---------------------------------------------------------
-	const posDensityIcon = await createDivIcon(`🏙️`, 'green');
-	const negDensityIcon = await createDivIcon(`🏡`, 'red');
-	const densityLayer = await createLayerGroupForColumn(map, data, 'density', posDensityIcon, negDensityIcon);
-
-	// Add liveliness layer ---------------------------------------------------------
-	const posLivelinessIcon = await createDivIcon(`👯`, 'green');
-	const negLivelinessIcon = await createDivIcon(`😴`, 'red');
-	const livelinessLayer = await createLayerGroupForColumn(map, data, 'liveliness', posLivelinessIcon, negLivelinessIcon);
-
-	// Transit Stop Quality
-	const transitStopLayer = await createLayerGroupForColumn(map, data, 'transitStopQuality',
-		await createDivIcon('🚏', 'green'), await createDivIcon('🚏', 'green'));
-
-	// Traffic Calming
-	const trafficLayer = await createLayerGroupForColumn(map, data, 'trafficCalming',
-		await createDivIcon('🍌', 'green'), await createDivIcon('🍌', 'green'));
-
-	// Sidewalk Quality
-	const sidewalkLayer = await createLayerGroupForColumn(map, data, 'sidewalkQuality',
-		await createDivIcon('🚶', 'green'), await createDivIcon('🚶', 'green'));
-
-	// Neighbourhood Care sub-layers
-	const lovedLayer = await createLayerGroupForColumn(map, data, 'loved', await createDivIcon('💕', 'green'), await createDivIcon('💕', 'green'));
-	const cleanLayer = await createLayerGroupForColumn(map, data, 'clean', await createDivIcon('🗑️', 'green'), await createDivIcon('🗑️', 'green'));
-	const activismLayer = await createLayerGroupForColumn(map, data, 'activismAndOrganizing', await createDivIcon('📣', 'green'), await createDivIcon('📣', 'green'));
-	const signsLayer = await createLayerGroupForColumn(map, data, 'supportiveSigns', await createDivIcon('🪧', 'green'), await createDivIcon('🪧', 'green'));
-	const greeneryLayer = await createLayerGroupForColumn(map, data, 'greenery', await createDivIcon('🌱', 'green'), await createDivIcon('🌱', 'green'));
-
-	// Create our base layer and overlays --------------------------------------
-	// Following: https://leafletjs.com/examples/layers-control/
-	const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		maxZoom: 19,
-		attribution: '© OpenStreetMap'
-	});
-
-	const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-		maxZoom: 19,
-		attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
-	});
-
-	// https://www.cyclosm.org/#map=12/49.2576/-123.1241/cyclosm
-	const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
-		maxZoom: 19,
-		attribution: '© CyclOSM is based on OpenStreetMap. Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
-	});
-
-	const cyclosmlite = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png', {
-		maxZoom: 19,
-		attribution: '© CyclOSM is based on OpenStreetMap. Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
-	});
-
+	// Setup Layer Control
 	const baseLayers = {
-		"CyclOSM": cyclosm,
-		"OpenStreetMap": osm,
-		"OpenStreetMap HOT": osmHOT
+		"CyclOSM": L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© CyclOSM' }),
+		"OpenStreetMap": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }),
+		"OpenStreetMap HOT": L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap HOT' })
 	};
 
 	const overlays = {
-		"CyclOSM lite": cyclosmlite,
-		"Bike infra": cyclistLayer,
-		"Transit connectivity": transitLayer,
-		"Transit Stop Quality 🚏": transitStopLayer,
-		"Perceived safety": safetyLayer,
-		"Traffic Calming 🍌": trafficLayer,
-		"Sidewalk Quality 🚶": sidewalkLayer,
-		"Neighbourhood — Loved 💕": lovedLayer,
-		"Neighbourhood — Clean 🗑️": cleanLayer,
-		"Neighbourhood — Activism 📣": activismLayer,
-		"Neighbourhood — Signs 🪧": signsLayer,
-		"Neighbourhood — Greenery 🌱": greeneryLayer,
-		"Density": densityLayer,
-		"Liveliness": livelinessLayer
+		"Bike infra": categoricalLayers.cyclists,
+		"Transit connectivity": categoricalLayers.transit,
+		"Transit Stop Quality 🚏": categoricalLayers.transitStopQuality,
+		"Perceived safety": categoricalLayers.safety,
+		"Traffic Calming 🍌": categoricalLayers.trafficCalming,
+		"Sidewalk Quality 🚶": categoricalLayers.sidewalkQuality,
+		"Neighbourhood — Loved 💕": categoricalLayers.loved,
+		"Neighbourhood — Clean 🗑️": categoricalLayers.clean,
+		"Neighbourhood — Activism 📣": categoricalLayers.activism,
+		"Neighbourhood — Signs 🪧": categoricalLayers.signs,
+		"Neighbourhood — Greenery 🌱": categoricalLayers.greenery,
+		"Density": categoricalLayers.density,
+		"Liveliness": categoricalLayers.liveliness
 	};
 
-	// Create a layer control and add it to the map
-	const layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+	L.control.layers(baseLayers, overlays).addTo(map);
 
+	return icons;
+}
+
+let iconsCache = null;
+
+// Throttled viewport update
+let lastUpdate = 0;
+async function updateDataForViewport(map) {
+	const now = Date.now();
+	if (now - lastUpdate < 1000) return; // 1s debounce
+	lastUpdate = now;
+
+	const bounds = map.getBounds();
+	const center = [bounds.getCenter().lat, bounds.getCenter().lng];
+
+	// Calculate radius (diagonal distance from center to corner)
+	const corner = bounds.getNorthEast();
+	const radiusInM = haversineDistance(center[0], center[1], corner.lat, corner.lng) * 1000;
+
+	const points = await fetchGeohashData(center, radiusInM);
+
+	if (points.length === 0) return;
+
+	points.forEach(p => {
+		const transformed = transformPoint(p);
+		addPointToLayer(categoricalLayers.cyclists, transformed, 'cyclists', iconsCache.cyclists.pos, iconsCache.cyclists.neg);
+		addPointToLayer(categoricalLayers.transit, transformed, 'transit', iconsCache.transit.pos, iconsCache.transit.neg);
+		addPointToLayer(categoricalLayers.safety, transformed, 'safety', iconsCache.safety.pos, iconsCache.safety.neg);
+		addPointToLayer(categoricalLayers.density, transformed, 'density', iconsCache.density.pos, iconsCache.density.neg);
+		addPointToLayer(categoricalLayers.liveliness, transformed, 'liveliness', iconsCache.liveliness.pos, iconsCache.liveliness.neg);
+		addPointToLayer(categoricalLayers.transitStopQuality, transformed, 'transitStopQuality', iconsCache.transitStopQuality.pos, iconsCache.transitStopQuality.neg);
+		addPointToLayer(categoricalLayers.trafficCalming, transformed, 'trafficCalming', iconsCache.trafficCalming.pos, iconsCache.trafficCalming.neg);
+		addPointToLayer(categoricalLayers.sidewalkQuality, transformed, 'sidewalkQuality', iconsCache.sidewalkQuality.pos, iconsCache.sidewalkQuality.neg);
+		addPointToLayer(categoricalLayers.loved, transformed, 'loved', iconsCache.loved.pos, iconsCache.loved.neg);
+		addPointToLayer(categoricalLayers.clean, transformed, 'clean', iconsCache.clean.pos, iconsCache.clean.neg);
+		addPointToLayer(categoricalLayers.activism, transformed, 'activism', iconsCache.activism.pos, iconsCache.activism.neg);
+		addPointToLayer(categoricalLayers.signs, transformed, 'signs', iconsCache.signs.pos, iconsCache.signs.neg);
+		addPointToLayer(categoricalLayers.greenery, transformed, 'greenery', iconsCache.greenery.pos, iconsCache.greenery.neg);
+	});
 }
 
 
@@ -279,8 +309,15 @@ async function startup() {
 	} catch (error) {
 		console.log("Geolocation error or denied. Defaulting to Vancouver.", error);
 	}
-	// Call the addData function regardless of geolocation result
-	addData(map);
+
+	// Initialize layers and categorical objects
+	iconsCache = await setupLayers(map);
+
+	// Perform initial load
+	await updateDataForViewport(map);
+
+	// Listen for map movements to fetch more data
+	map.on('moveend', () => updateDataForViewport(map));
 
 	// Handle stats toggle
 	const statsToggle = document.getElementById('stats-toggle');
