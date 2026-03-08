@@ -113,10 +113,15 @@ async function createLayerGroupForColumn(map, data, columnName, posIcon, negIcon
 			const bgColor = `hsla(${hue}, 80%, 45%, 0.9)`;
 
 			const count = cluster.getChildCount();
+
+			// Dynamic size based on count: log scale for better distribution
+			// Base size 36px for small clusters, up to 64px for very large ones
+			const size = Math.min(64, 36 + Math.log10(count) * 12);
+
 			return L.divIcon({
-				html: `<div style="background-color: ${bgColor}; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.4);"><span>${count}</span></div>`,
+				html: `<div style="background-color: ${bgColor}; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.4);"><span class="cluster-count">${count}</span></div>`,
 				className: `custom-cluster`,
-				iconSize: L.point(44, 44)
+				iconSize: L.point(size, size)
 			});
 		},
 		maxClusterRadius: 40,
@@ -241,6 +246,18 @@ async function startup() {
 	}
 	// Call the addData function regardless of geolocation result
 	addData(map);
+
+	// Handle stats toggle
+	const statsToggle = document.getElementById('stats-toggle');
+	if (statsToggle) {
+		statsToggle.addEventListener('change', (e) => {
+			if (e.target.checked) {
+				document.body.classList.add('show-stats');
+			} else {
+				document.body.classList.remove('show-stats');
+			}
+		});
+	}
 }
 
 startup();

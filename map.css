@@ -45,6 +45,27 @@ html {
     overflow: hidden;
 }
 
+.stats-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 16px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    color: #64748b;
+    user-select: none;
+}
+
+.stats-toggle-container input {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.stats-toggle-container label {
+    cursor: pointer;
+}
+
 #map {
     position: absolute;
     top: 0;
@@ -87,6 +108,15 @@ html {
 
 .custom-cluster:hover {
     transform: scale(1.05);
+}
+
+.cluster-count {
+    display: none;
+    /* Default Hidden per plan */
+}
+
+.show-stats .cluster-count {
+    display: block;
 }
 
 .custom-cluster div {
