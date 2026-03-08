@@ -169,10 +169,12 @@ function getLocation() {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
+        const hash = geofire.geohashForLocation([latitude, longitude]);
+        const location = new firebase.firestore.GeoPoint(latitude, longitude);
+
         // Combine ratings and coordinates into a single object
         const allData = {
           ratings,
-          coordinates: { latitude, longitude },
           freeformText: document.getElementById("freeform-input").value,
         };
 
@@ -180,7 +182,8 @@ function getLocation() {
           .add({
             user_info: user_info,
             ratings: allData.ratings,
-            coordinates: allData.coordinates,
+            geohash: hash,
+            location: location,
             extra: allData.freeformText,
             timestamp: new Date().toISOString()
           })
