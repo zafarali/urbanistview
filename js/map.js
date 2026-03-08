@@ -83,7 +83,15 @@ async function fetchAndParseData() {
 					'transit': data.ratings['Transit connectivity'],
 					'safety': data.ratings['Road Safety Vibes'],
 					'density': data.ratings['Density'],
-					'liveliness': data.ratings['Liveliness']
+					'liveliness': data.ratings['Liveliness'],
+					'transitStopQuality': data.ratings['Transit Stop Quality'],
+					'trafficCalming': data.ratings['Traffic Calming'],
+					'sidewalkQuality': data.ratings['Sidewalk Quality'],
+					'loved': data.ratings['loved'],
+					'clean': data.ratings['clean'],
+					'activismAndOrganizing': data.ratings['activism_and_organizing'],
+					'supportiveSigns': data.ratings['supportive_signs'],
+					'greenery': data.ratings['greenery'],
 				}
 			)
 		});
@@ -189,6 +197,25 @@ async function addData(map) {
 	const negLivelinessIcon = await createDivIcon(`😴`, 'red');
 	const livelinessLayer = await createLayerGroupForColumn(map, data, 'liveliness', posLivelinessIcon, negLivelinessIcon);
 
+	// Transit Stop Quality
+	const transitStopLayer = await createLayerGroupForColumn(map, data, 'transitStopQuality',
+		await createDivIcon('🚏', 'green'), await createDivIcon('🚏', 'green'));
+
+	// Traffic Calming
+	const trafficLayer = await createLayerGroupForColumn(map, data, 'trafficCalming',
+		await createDivIcon('🍌', 'green'), await createDivIcon('🍌', 'green'));
+
+	// Sidewalk Quality
+	const sidewalkLayer = await createLayerGroupForColumn(map, data, 'sidewalkQuality',
+		await createDivIcon('🚶', 'green'), await createDivIcon('🚶', 'green'));
+
+	// Neighbourhood Care sub-layers
+	const lovedLayer = await createLayerGroupForColumn(map, data, 'loved', await createDivIcon('💕', 'green'), await createDivIcon('💕', 'green'));
+	const cleanLayer = await createLayerGroupForColumn(map, data, 'clean', await createDivIcon('🗑️', 'green'), await createDivIcon('🗑️', 'green'));
+	const activismLayer = await createLayerGroupForColumn(map, data, 'activismAndOrganizing', await createDivIcon('📣', 'green'), await createDivIcon('📣', 'green'));
+	const signsLayer = await createLayerGroupForColumn(map, data, 'supportiveSigns', await createDivIcon('🪧', 'green'), await createDivIcon('🪧', 'green'));
+	const greeneryLayer = await createLayerGroupForColumn(map, data, 'greenery', await createDivIcon('🌱', 'green'), await createDivIcon('🌱', 'green'));
+
 	// Create our base layer and overlays --------------------------------------
 	// Following: https://leafletjs.com/examples/layers-control/
 	const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -222,7 +249,15 @@ async function addData(map) {
 		"CyclOSM lite": cyclosmlite,
 		"Bike infra": cyclistLayer,
 		"Transit connectivity": transitLayer,
+		"Transit Stop Quality 🚏": transitStopLayer,
 		"Perceived safety": safetyLayer,
+		"Traffic Calming 🍌": trafficLayer,
+		"Sidewalk Quality 🚶": sidewalkLayer,
+		"Neighbourhood — Loved 💕": lovedLayer,
+		"Neighbourhood — Clean 🗑️": cleanLayer,
+		"Neighbourhood — Activism 📣": activismLayer,
+		"Neighbourhood — Signs 🪧": signsLayer,
+		"Neighbourhood — Greenery 🌱": greeneryLayer,
 		"Density": densityLayer,
 		"Liveliness": livelinessLayer
 	};

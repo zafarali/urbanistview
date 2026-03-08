@@ -21,33 +21,56 @@
 
   <div id="main-wrapper" style="display: none;">
     <div id="rating-rows">
-      <div class="rating-row">
-        <h3>Transit connectivity</h3>
-        <button class="thumbs-down">🚗</button>
-        <button class="thumbs-up">🚊</button>
+      <div class="rating-group">
+        <h4>Mobility & Transit</h4>
+        <div class="rating-row">
+          <h3>Transit connectivity</h3>
+          <button class="thumbs-down">🚗</button>
+          <button class="thumbs-up">🚊</button>
+          <button class="toggle" data-key="Transit Stop Quality">🚏</button>
+        </div>
+        <div class="rating-row">
+          <h3>Bike infrastructure</h3>
+          <button class="thumbs-down">🚳</button>
+          <button class="thumbs-up">🚲</button>
+          <button class="toggle" data-key="kid_friendlyBike infrastructure">👶</button>
+        </div>
       </div>
-      <div class="rating-row">
-        <h3>Bike infrastructure</h3>
-        <button class="thumbs-down">🚳</button>
-        <button class="thumbs-up">🚲</button>
-        <button class="toggle" data-key="kid_friendlyBike infrastructure">👶</button>
+
+      <div class="rating-group">
+        <h4>Street & Environment</h4>
+        <div class="rating-row">
+          <h3>Road Safety Vibes</h3>
+          <button class="thumbs-down">🚙</button>
+          <button class="thumbs-up">😌</button>
+          <button class="toggle" data-key="kid_friendlyRoad Safety Vibes">👶</button>
+          <button class="toggle" data-key="Traffic Calming">🍌</button>
+          <button class="toggle" data-key="Sidewalk Quality">🚶</button>
+        </div>
+        <div class="rating-row neighbourhood-care">
+          <h3>Neighbourhood Care</h3>
+          <button class="toggle" data-key="loved">💕</button>
+          <button class="toggle" data-key="clean">🗑️</button>
+          <button class="toggle" data-key="activism_and_organizing">📣</button>
+          <button class="toggle" data-key="supportive_signs">🪧</button>
+          <button class="toggle" data-key="greenery">🌱</button>
+        </div>
       </div>
-      <div class="rating-row">
-        <h3>Road Safety Vibes</h3>
-        <button class="thumbs-down">🚙</button>
-        <button class="thumbs-up">😌</button>
-        <button class="toggle" data-key="kid_friendlyRoad Safety Vibes">👶</button>
+
+      <div class="rating-group">
+        <h4>Area Character</h4>
+        <div class="rating-row">
+          <h3>Density</h3>
+          <button class="thumbs-down">🏡</button>
+          <button class="thumbs-up">🏙️</button>
+        </div>
+        <div class="rating-row">
+          <h3>Liveliness</h3>
+          <button class="thumbs-down">😴</button>
+          <button class="thumbs-up">👯</button>
+        </div>
       </div>
-      <div class="rating-row">
-        <h3>Density</h3>
-        <button class="thumbs-down">🏡</button>
-        <button class="thumbs-up">🏙️</button>
-      </div>
-      <div class="rating-row">
-        <h3>Liveliness</h3>
-        <button class="thumbs-down">😴</button>
-        <button class="thumbs-up">👯</button>
-      </div>
+
       <div class="freeform-text">
         <label for="freeform-input">Additional tags:</label>
         <input type="text" id="freeform-input" placeholder="Enter your tags here">

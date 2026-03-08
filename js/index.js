@@ -133,16 +133,25 @@ function handleToggle(event) {
   }
 }
 
-// Add event listeners to all thumbs-up and thumbs-down buttons
-ratingRows.forEach(row => {
-  const thumbsUpButton = row.querySelector('.thumbs-up');
-  const thumbsDownButton = row.querySelector('.thumbs-down');
-  thumbsUpButton.addEventListener('click', handleRatingClick);
-  thumbsDownButton.addEventListener('click', handleRatingClick);
-  row.querySelectorAll('.toggle').forEach(btn => {
-    btn.addEventListener('click', handleToggle);
+// Use event delegation for all rating and toggle clicks
+const ratingRowsContainer = document.getElementById('rating-rows');
+if (ratingRowsContainer) {
+  ratingRowsContainer.addEventListener('click', (event) => {
+    const target = event.target;
+
+    // Check for thumbs-up/down
+    if (target.classList.contains('thumbs-up') || target.classList.contains('thumbs-down')) {
+      handleRatingClick(event);
+    }
+
+    // Check for toggles
+    if (target.classList.contains('toggle')) {
+      handleToggle(event);
+    }
   });
-});
+} else {
+  console.error('Urbanist: #rating-rows container not found');
+}
 
 // Handle submit button click
 submitButton.addEventListener('click', () => {

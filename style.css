@@ -40,11 +40,33 @@ h1 {
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 
+.rating-group {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.rating-group:last-of-type {
+  border-bottom: none;
+}
+
+.rating-group h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0 0 8px 0;
+}
+
 .rating-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.rating-row.neighbourhood-care {
+  flex-wrap: wrap;
 }
 
 .rating-row h3 {
@@ -113,14 +135,14 @@ h1 {
 .thumbs-up,
 .thumbs-down {
   background-color: transparent;
-  padding: 8px;
+  padding: 4px;
   /* Center the emoji within the button */
   text-align: center;
   /* Adjust font size as needed */
   font-size: 24px;
   cursor: pointer;
   /* Indicate interactivity */
-  margin: 5px;
+  margin: 2px;
   /* Add spacing between buttons */
   border: 2px solid transparent;
   border-radius: 999px;
@@ -131,12 +153,12 @@ h1 {
 .thumbs-up.selected,
 .thumbs-down.selected {
   border: 2px solid;
-  border-color: blue;
-  /* Or any color you prefer */
+  border-color: #54a0ff;
 }
 
 .toggle.selected::after {
-  content: "☑️";
+  content: " ";
+  display: none;
 }
 
 .toast {
