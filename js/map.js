@@ -116,6 +116,7 @@ async function fetchGeohashData(center, radiusInM) {
 // Function to parse the raw firestore data into our app structure
 function transformPoint(point) {
 	return {
+		id: point.id,
 		latitude: point.latitude,
 		longitude: point.longitude,
 		'cyclists': point.ratings['Bike infrastructure'],
@@ -169,10 +170,12 @@ function addPointToLayer(layer, point, columnName, posIcon, negIcon) {
 	if (val === true) {
 		const marker = L.marker([point.latitude, point.longitude], { icon: posIcon });
 		marker.urbanistScore = 1;
+		marker.docId = point.id;
 		layer.addLayer(marker);
 	} else if (val === false) {
 		const marker = L.marker([point.latitude, point.longitude], { icon: negIcon });
 		marker.urbanistScore = -1;
+		marker.docId = point.id;
 		layer.addLayer(marker);
 	}
 }
@@ -263,10 +266,46 @@ let iconsCache = null;
 
 // Throttled viewport update
 let lastUpdate = 0;
+const MAX_MARKERS_IN_MEMORY = 2000;
+
 async function updateDataForViewport(map) {
 	const now = Date.now();
 	if (now - lastUpdate < 1000) return; // 1s debounce
 	lastUpdate = now;
+
+	// Garbage Collection: Check if we have too many markers in memory
+	if (processedDocIds.size > MAX_MARKERS_IN_MEMORY) {
+		const bounds = map.getBounds();
+		const center = [bounds.getCenter().lat, bounds.getCenter().lng];
+		const corner = bounds.getNorthEast();
+		const currentRadiusM = haversineDistance(center[0], center[1], corner.lat, corner.lng) * 1000;
+		const purgeThresholdM = currentRadiusM * 3;
+
+		console.log(`Garbage collection: evaluating ${processedDocIds.size} markers.`);
+		let purgedCount = 0;
+		const purgedIds = new Set();
+
+		// Remove markers outside of the threshold buffer
+		Object.values(categoricalLayers).forEach(layer => {
+			if (layer && typeof layer.eachLayer === 'function') {
+				layer.eachLayer(marker => {
+					if (marker.getLatLng) {
+						const latLng = marker.getLatLng();
+						const dist = haversineDistance(center[0], center[1], latLng.lat, latLng.lng) * 1000;
+						if (dist > purgeThresholdM) {
+							layer.removeLayer(marker);
+							if (marker.docId) purgedIds.add(marker.docId);
+							purgedCount++;
+						}
+					}
+				});
+			}
+		});
+
+		purgedIds.forEach(id => processedDocIds.delete(id));
+		console.log(`Garbage collection: removed ${purgedIds.size} documents, ${purgedCount} markers outside of ${Math.round(purgeThresholdM)}m radius.`);
+	}
+
 
 	const bounds = map.getBounds();
 	const center = [bounds.getCenter().lat, bounds.getCenter().lng];
