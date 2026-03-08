@@ -122,13 +122,13 @@ function handleRatingClick(event) {
   event.target.classList.add('selected');
 }
 
-function toggleKidFriendly(event) {
-  const ratingCategory = 'kid_friendly' + event.target.closest('.rating-row').querySelector('h3').textContent;
+function handleToggle(event) {
+  const key = event.target.dataset.key;
   if (event.target.classList.contains('selected')) {
     event.target.classList.remove('selected');
-    delete ratings[ratingCategory];
+    delete ratings[key];
   } else {
-    ratings[ratingCategory] = true;
+    ratings[key] = true;
     event.target.classList.add('selected');
   }
 }
@@ -139,9 +139,9 @@ ratingRows.forEach(row => {
   const thumbsDownButton = row.querySelector('.thumbs-down');
   thumbsUpButton.addEventListener('click', handleRatingClick);
   thumbsDownButton.addEventListener('click', handleRatingClick);
-  if (row.querySelector('.kidfriendly')) {
-    row.querySelector('.kidfriendly').addEventListener('click', toggleKidFriendly);
-  }
+  row.querySelectorAll('.toggle').forEach(btn => {
+    btn.addEventListener('click', handleToggle);
+  });
 });
 
 // Handle submit button click

@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="stylesheet" href="style.css">
-<script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
-<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
-<title>Rating App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
+  <title>Rating App</title>
 </head>
+
 <body>
   <h1>urbanist views from the ground</h1>
 
@@ -28,13 +30,13 @@
         <h3>Bike infrastructure</h3>
         <button class="thumbs-down">🚳</button>
         <button class="thumbs-up">🚲</button>
-        <button class="kidfriendly">👶</button>
+        <button class="toggle" data-key="kid_friendlyBike infrastructure">👶</button>
       </div>
       <div class="rating-row">
         <h3>Road Safety Vibes</h3>
         <button class="thumbs-down">🚙</button>
         <button class="thumbs-up">😌</button>
-        <button class="kidfriendly">👶</button>
+        <button class="toggle" data-key="kid_friendlyRoad Safety Vibes">👶</button>
       </div>
       <div class="rating-row">
         <h3>Density</h3>
@@ -63,7 +65,5 @@
   <script src="./js/firebase-config.js"></script>
   <script src="./js/index.js"></script>
 </body>
+
 </html>
-
-
-
