@@ -1,51 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+  <meta charset="UTF-8">
   <title>Map</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="map.css">
-  <style>/* Target the buttons */
-.modern-button {
-  font-family: Roboto, sans-serif;
-  border: none;
-  border-radius: 5px; /* Adjust as desired */
-  padding: 15px 30px; /* Adjust for desired size */
-  background-color: #54a0ff; /* Light blue */
-/*  margin-top: 20px;*/
-  color: #fff; /* White text */
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out; /* Smooth color change */
-}
-
-.modern-button:hover {
-  background-color: #357ae8; /* Darker blue on hover */
-}
-
-.modern-button:active {
-  background-color: #2a62d0; /* Even darker blue on click */
-  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.15); /* Subtle shadow on click */
-}
-</style>
 </head>
+
 <body>
   <section id="explainer">
-	<h3> Here's our view from the ground: </h3>
-  <a class="modern-button", href="./index.html">record data</a><br /><br/><br/>
-    </section>
-  <div id="map" style="height: 400px;"></div>
+    <h3>Here's our view from the ground:</h3>
+  </section>
+  <a class="map-fab" href="./index.html" aria-label="Record a new spot" title="Record a new spot">+</a>
+  <div id="map"></div>
 
+  <script src="./js/firebase-config.js"></script>
   <script src="./js/map.js"></script>
 
 </body>
+
 </html>
