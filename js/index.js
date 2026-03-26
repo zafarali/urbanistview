@@ -169,6 +169,7 @@ function getLocation() {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
 
+        const geofire = window["geofire-common"];
         const hash = geofire.geohashForLocation([latitude, longitude]);
         const location = new firebase.firestore.GeoPoint(latitude, longitude);
 

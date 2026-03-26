@@ -128,8 +128,8 @@ function transformPoint(point) {
 		'sidewalkQuality': point.ratings['Sidewalk Quality'],
 		'loved': point.ratings['loved'],
 		'clean': point.ratings['clean'],
-		'activismAndOrganizing': point.ratings['activism_and_organizing'],
-		'supportiveSigns': point.ratings['supportive_signs'],
+		'activism': point.ratings['activism_and_organizing'],
+		'signs': point.ratings['supportive_signs'],
 		'greenery': point.ratings['greenery'],
 	};
 }
