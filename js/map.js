@@ -300,6 +300,7 @@ async function updateDataForViewport(map) {
 
 // Call the initMap function to create the map and save into a variable
 const map = initMap();
+window.map = map;
 
 async function startup() {
 	try {

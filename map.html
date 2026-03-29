@@ -31,10 +31,33 @@
     </div>
   </section>
   <a class="map-fab" href="./index.html" aria-label="Record a new spot" title="Record a new spot">+</a>
+  <button class="search-fab" id="search-fab" aria-label="Search location" title="Search location">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </button>
+
+  <div id="search-modal" class="search-modal" aria-hidden="true">
+    <div class="search-modal-inner">
+      <div class="search-modal-header">
+        <span class="search-modal-title">Search location</span>
+        <button class="search-dismiss" id="search-dismiss" aria-label="Close search">&#x2715;</button>
+      </div>
+      <div class="search-input-row">
+        <input type="text" id="search-input" class="search-input" placeholder="Enter a city, neighbourhood…" autocomplete="off" />
+        <button class="search-go" id="search-go" aria-label="Go">Go</button>
+      </div>
+      <div id="search-error" class="search-error" aria-live="polite"></div>
+      <div class="search-quick-links">
+        <button class="search-quick-btn" data-lat="49.2827" data-lng="-123.1207" data-zoom="12">Vancouver</button>
+        <button class="search-quick-btn" data-lat="43.65192811517835" data-lng="-79.40488030921057" data-zoom="12">Toronto West Side</button>
+      </div>
+    </div>
+  </div>
+
   <div id="map"></div>
 
   <script src="./js/firebase-config.js"></script>
   <script src="./js/map.js"></script>
+  <script src="./js/search.js"></script>
 
 </body>
 
