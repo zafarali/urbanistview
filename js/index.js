@@ -192,6 +192,7 @@ function getLocation() {
             showToast('Thanks! Your rating has been recorded.', 'success');
             submitButton.disabled = false;
             submitButton.textContent = originalLabel;
+            resetForm();
           })
           .catch((error) => {
             console.error('Error saving data:', error);
@@ -210,5 +211,17 @@ function getLocation() {
   } else {
     showToast('Geolocation is not supported by your browser.', 'error');
   }
+}
+
+function resetForm() {
+  // Clear the ratings state object
+  Object.keys(ratings).forEach(key => delete ratings[key]);
+
+  // Remove selected class from all rating buttons
+  document.querySelectorAll('.thumbs-up.selected, .thumbs-down.selected, .toggle.selected')
+    .forEach(el => el.classList.remove('selected'));
+
+  // Clear freeform text input
+  document.getElementById('freeform-input').value = '';
 }
 
