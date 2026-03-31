@@ -86,6 +86,54 @@
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
 
+  <button id="legend-btn" class="legend-fab" aria-label="Show emoji legend">ℹ️</button>
+
+  <div id="legend-overlay" class="legend-overlay" aria-hidden="true">
+    <div class="legend-panel" role="dialog" aria-label="Emoji legend">
+      <div class="legend-header">
+        <span class="legend-title">What the emojis mean</span>
+        <button class="legend-close" id="legend-close" aria-label="Close">✕</button>
+      </div>
+      <div class="legend-body">
+        <h5>Mobility &amp; Transit</h5>
+        <div class="legend-section">
+          <div class="legend-subsection-title">Transit connectivity</div>
+          <div class="legend-row"><span>🚗</span><span>Car-dependent — poor transit access</span></div>
+          <div class="legend-row"><span>🚊</span><span>Good transit — trains/trams available</span></div>
+          <div class="legend-row"><span>🚏</span><span>Transit stop quality is good</span></div>
+          <div class="legend-subsection-title">Bike infrastructure</div>
+          <div class="legend-row"><span>🚳</span><span>No bike infrastructure</span></div>
+          <div class="legend-row"><span>🚲</span><span>Good bike lanes / infrastructure</span></div>
+          <div class="legend-row"><span>👶</span><span>Kid-friendly cycling routes</span></div>
+        </div>
+        <h5>Street &amp; Environment</h5>
+        <div class="legend-section">
+          <div class="legend-subsection-title">Road Safety Vibes</div>
+          <div class="legend-row"><span>🚙</span><span>Dangerous / car-dominated roads</span></div>
+          <div class="legend-row"><span>😌</span><span>Safe, calm street vibes</span></div>
+          <div class="legend-row"><span>👶</span><span>Kid-friendly road safety</span></div>
+          <div class="legend-row"><span>🍌</span><span>Traffic calming features (speed bumps, chicanes, etc.)</span></div>
+          <div class="legend-row"><span>🚶</span><span>Good sidewalks / pedestrian infrastructure</span></div>
+          <div class="legend-subsection-title">Neighbourhood Care</div>
+          <div class="legend-row"><span>💕</span><span>Neighbourhood feels loved / community pride</span></div>
+          <div class="legend-row"><span>🗑️</span><span>Neighbourhood is clean / well-maintained</span></div>
+          <div class="legend-row"><span>📣</span><span>Active community organizing</span></div>
+          <div class="legend-row"><span>🪧</span><span>Supportive signs / visible community expression</span></div>
+          <div class="legend-row"><span>🌱</span><span>Good greenery / street trees</span></div>
+        </div>
+        <h5>Area Character</h5>
+        <div class="legend-section">
+          <div class="legend-subsection-title">Density</div>
+          <div class="legend-row"><span>🏡</span><span>Low density / suburban sprawl</span></div>
+          <div class="legend-row"><span>🏙️</span><span>High density / urban</span></div>
+          <div class="legend-subsection-title">Liveliness</div>
+          <div class="legend-row"><span>😴</span><span>Dead / boring area</span></div>
+          <div class="legend-row"><span>👯</span><span>Lively, active street life</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="./js/firebase-config.js"></script>
   <script src="./js/index.js"></script>
 </body>

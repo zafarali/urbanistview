@@ -191,3 +191,126 @@ h1 {
 .toast--success {
   background-color: #15803d;
 }
+
+/* Emoji legend FAB + overlay */
+.legend-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: transform 0.15s ease;
+}
+
+.legend-fab:hover {
+  transform: scale(1.1);
+}
+
+.legend-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.legend-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.legend-panel {
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 75vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.legend-overlay.open .legend-panel {
+  transform: translateY(0);
+}
+
+.legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  background: #fff;
+}
+
+.legend-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.legend-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.legend-body {
+  padding: 4px 20px 24px;
+}
+
+.legend-body h5 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 16px 0 6px;
+}
+
+.legend-section {
+  margin-bottom: 4px;
+}
+
+.legend-subsection-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin: 8px 0 2px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 14px;
+  color: #475569;
+}
+
+.legend-row span:first-child {
+  font-size: 20px;
+  min-width: 28px;
+  text-align: center;
+}
