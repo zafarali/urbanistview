@@ -127,7 +127,7 @@ function transformPoint(point) {
 		'trafficCalming': point.ratings['Traffic Calming'],
 		'sidewalkQuality': point.ratings['Sidewalk Quality'],
 		'loved': point.ratings['loved'],
-		'clean': point.ratings['clean'],
+		'cleanliness': point.ratings['Cleanliness'],
 		'activism': point.ratings['activism_and_organizing'],
 		'signs': point.ratings['supportive_signs'],
 		'greenery': point.ratings['greenery'],
@@ -203,7 +203,7 @@ async function setupLayers(map) {
 		trafficCalming: { pos: await createDivIcon('🍌', 'green'), neg: await createDivIcon('🍌', 'green') },
 		sidewalkQuality: { pos: await createDivIcon('🚶', 'green'), neg: await createDivIcon('🚶', 'green') },
 		loved: { pos: await createDivIcon('💕', 'green'), neg: await createDivIcon('💕', 'green') },
-		clean: { pos: await createDivIcon('🗑️', 'green'), neg: await createDivIcon('🗑️', 'green') },
+		cleanliness: { pos: await createDivIcon('🫧', 'green'), neg: await createDivIcon('🤢', 'red') },
 		activism: { pos: await createDivIcon('📣', 'green'), neg: await createDivIcon('📣', 'green') },
 		signs: { pos: await createDivIcon('🪧', 'green'), neg: await createDivIcon('🪧', 'green') },
 		greenery: { pos: await createDivIcon('🌱', 'green'), neg: await createDivIcon('🌱', 'green') }
@@ -218,7 +218,7 @@ async function setupLayers(map) {
 		trafficCalming: await createEmptyLayerGroup(),
 		sidewalkQuality: await createEmptyLayerGroup(),
 		loved: await createEmptyLayerGroup(),
-		clean: await createEmptyLayerGroup(),
+		cleanliness: await createEmptyLayerGroup(),
 		activism: await createEmptyLayerGroup(),
 		signs: await createEmptyLayerGroup(),
 		greenery: await createEmptyLayerGroup(),
@@ -246,7 +246,7 @@ async function setupLayers(map) {
 		"Traffic Calming 🍌": categoricalLayers.trafficCalming,
 		"Sidewalk Quality 🚶": categoricalLayers.sidewalkQuality,
 		"Neighbourhood — Loved 💕": categoricalLayers.loved,
-		"Neighbourhood — Clean 🗑️": categoricalLayers.clean,
+		"Cleanliness 🫧/🤢": categoricalLayers.cleanliness,
 		"Neighbourhood — Activism 📣": categoricalLayers.activism,
 		"Neighbourhood — Signs 🪧": categoricalLayers.signs,
 		"Neighbourhood — Greenery 🌱": categoricalLayers.greenery,
@@ -290,7 +290,7 @@ async function updateDataForViewport(map) {
 		addPointToLayer(categoricalLayers.trafficCalming, transformed, 'trafficCalming', iconsCache.trafficCalming.pos, iconsCache.trafficCalming.neg);
 		addPointToLayer(categoricalLayers.sidewalkQuality, transformed, 'sidewalkQuality', iconsCache.sidewalkQuality.pos, iconsCache.sidewalkQuality.neg);
 		addPointToLayer(categoricalLayers.loved, transformed, 'loved', iconsCache.loved.pos, iconsCache.loved.neg);
-		addPointToLayer(categoricalLayers.clean, transformed, 'clean', iconsCache.clean.pos, iconsCache.clean.neg);
+		addPointToLayer(categoricalLayers.cleanliness, transformed, 'cleanliness', iconsCache.cleanliness.pos, iconsCache.cleanliness.neg);
 		addPointToLayer(categoricalLayers.activism, transformed, 'activism', iconsCache.activism.pos, iconsCache.activism.neg);
 		addPointToLayer(categoricalLayers.signs, transformed, 'signs', iconsCache.signs.pos, iconsCache.signs.neg);
 		addPointToLayer(categoricalLayers.greenery, transformed, 'greenery', iconsCache.greenery.pos, iconsCache.greenery.neg);

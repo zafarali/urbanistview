@@ -213,6 +213,30 @@ function getLocation() {
   }
 }
 
+// Emoji legend overlay
+const legendBtn = document.getElementById('legend-btn');
+const legendOverlay = document.getElementById('legend-overlay');
+const legendClose = document.getElementById('legend-close');
+
+function openLegend() {
+  legendOverlay.classList.add('open');
+  legendOverlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeLegend() {
+  legendOverlay.classList.remove('open');
+  legendOverlay.setAttribute('aria-hidden', 'true');
+}
+
+legendBtn.addEventListener('click', openLegend);
+legendClose.addEventListener('click', closeLegend);
+legendOverlay.addEventListener('click', (e) => {
+  if (e.target === legendOverlay) closeLegend();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLegend();
+});
+
 function resetForm() {
   // Clear the ratings state object
   Object.keys(ratings).forEach(key => delete ratings[key]);
