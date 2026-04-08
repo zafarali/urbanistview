@@ -52,6 +52,9 @@ var handleSignedOutUser = function () {
   document.getElementById('firebaseui-auth-container').style.display = 'block';
   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function () {
     ui.start('#firebaseui-auth-container', getUiConfig());
+  }).catch(function (error) {
+    console.error('Failed to set auth persistence:', error);
+    ui.start('#firebaseui-auth-container', getUiConfig());
   });
 };
 
