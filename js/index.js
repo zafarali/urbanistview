@@ -50,7 +50,9 @@ var handleSignedOutUser = function () {
   document.getElementById('main-wrapper').style.display = 'none';
   document.getElementById('submit-button').style.display = 'none';
   document.getElementById('firebaseui-auth-container').style.display = 'block';
-  ui.start('#firebaseui-auth-container', getUiConfig());
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function () {
+    ui.start('#firebaseui-auth-container', getUiConfig());
+  });
 };
 
 var handleSignedInUser = function (username) {
